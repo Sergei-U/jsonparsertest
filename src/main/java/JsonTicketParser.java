@@ -3,10 +3,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,23 +20,33 @@ public class JsonTicketParser {
         try {
             DesTickets desTickets = objectMapper.readValue(new File("src/main/resources/tickets.json"), DesTickets.class);
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            ArrayList<DesTickets> desTicketsArrayList = new ArrayList<>();
-            desTicketsArrayList.add(desTickets);
-            TicketsJSON ticketsJSON = new TicketsJSON();
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy hh:mm");
-            Date arrDate = new Date();
-            Date depDate = new Date();
-            for (int i=0; i<desTicketsArrayList.size(); i++) {
-                ticketsJSON.getDeparture_date();
-                ticketsJSON.getArrival_date();
-                ticketsJSON.getDeparture_time();
-                ticketsJSON.getArrival_time();
-                dateFormat.format(ticketsJSON.getDeparture_date()+ticketsJSON.getDeparture_time());
-            }
-            System.out.println(desTicketsArrayList);
-         } catch (IOException e) {
-            e.printStackTrace();
-        }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+            List<Duration> durationList = new ArrayList<>();
+            System.out.println(desTickets.getTickets());
+            Duration resultD = null;
+            for (int i = 0; i < desTickets.getTickets().size(); i++) {
 
+                LocalDateTime start = LocalDateTime.parse(desTickets.getTickets().get(i).getDeparture_date() + " " + desTickets.getTickets().get(i).getDeparture_time(), formatter);
+                LocalDateTime end = LocalDateTime.parse(desTickets.getTickets().get(i).getArrival_date() + " " + desTickets.getTickets().get(i).getArrival_time(), formatter);
+                Duration duration = Duration.between(end, start).abs().plusHours(7);
+
+                System.out.printf(
+                        "%dд %dч %dмин%n",
+                        duration.toDays(),
+                        duration.toHours() % 24,
+                        duration.toMinutes() % 60
+                );
+                durationList.add(duration);
+            }
+            for(int j = 0; j<durationList.size(); j ++) {
+                resultD += Duration.between(durationList.get(j));
+            }
+    } catch(
+    IOException e)
+
+    {
+        e.printStackTrace();
     }
-    }
+
+}
+}

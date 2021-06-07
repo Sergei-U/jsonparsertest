@@ -2,6 +2,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -9,6 +10,8 @@ import java.util.Date;
  */
 @Data
 public class TicketsJSON {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
 
     @JsonProperty(value = "origin")
     private String origin;
@@ -50,5 +53,21 @@ public class TicketsJSON {
 
     @JsonProperty(value = "price")
     private Long price;
+
+    public String getDeparture_date() {
+        return dateFormat.format(departure_date);
+    }
+
+    public String getDeparture_time() {
+        return timeFormat.format(departure_time);
+    }
+
+    public String getArrival_date() {
+        return dateFormat.format(arrival_date);
+    }
+
+    public String getArrival_time() {
+        return timeFormat.format(arrival_time);
+    }
 }
 
